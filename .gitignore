@@ -1,0 +1,24 @@
+# Virtual environment
+pyvenv/
+
+# Training checkpoints (large binary files — use compress.py to make the artifact)
+checkpoints/
+
+# Raw training data (re-downloadable via python src/data.py)
+data/
+
+# Compressed submission artifact
+artifact/
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+
+# macOS metadata
+.DS_Store
