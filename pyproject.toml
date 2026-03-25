@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "chineseroom"
+version = "0.1.0"
+description = "Dual-Representation JEPA language model for the Parameter Golf challenge"
+requires-python = ">=3.11"
+
+dependencies = [
+    # Core deep learning framework
+    "torch>=2.3.0",
+    # Fast BPE tokenizer used in data.py
+    "tiktoken>=0.7.0",
+    # Tensor rearrangement helpers (used in model.py)
+    "einops>=0.8.0",
+    # YAML config parsing in train.py and compress.py
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    # Lightweight experiment tracking (optional but recommended)
+    "wandb>=0.17.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

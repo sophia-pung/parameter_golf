@@ -1,0 +1,67 @@
+# ── Data ──────────────────────────────────────────────────────────────────────
+data:
+  # Path to the plain-text training corpus.
+  # Run `python src/data.py` to auto-download a sample corpus to this location.
+  path: data/corpus.txt
+
+# ── Model architecture ─────────────────────────────────────────────────────────
+model:
+  # Number of tokens in the vocabulary.
+  # The Parameter Golf challenge uses 1024; set to 50257 for gpt2 tokenizer.
+  vocab_size: 1024
+
+  # Hidden dimension of the transformer (width of residual stream).
+  # Increasing this is the main lever for adding model capacity.
+  d_model: 256
+
+  # Number of stacked transformer blocks (depth).
+  n_layers: 6
+
+  # Number of attention heads per block. Must divide d_model evenly.
+  # head_dim = d_model / n_heads = 256 / 4 = 64
+  n_heads: 4
+
+  # Stream B auxiliary embedding dimension (d_sym << d_model to stay lightweight).
+  d_sym: 64
+
+  # Length of each training sequence window in tokens.
+  seq_len: 512
+
+# ── Training ───────────────────────────────────────────────────────────────────
+train:
+  # Mini-batch size: number of sequences processed per gradient step.
+  batch_size: 32
+
+  # Total number of gradient update steps to perform.
+  max_steps: 50000
+
+  # Number of full passes through the dataset (an upper bound; max_steps takes priority).
+  epochs: 10
+
+  # Peak learning rate (reached at end of warmup).
+  max_lr: 3.0e-4
+
+  # Floor for the cosine decay schedule (learning rate at the end of training).
+  min_lr: 3.0e-5
+
+  # Number of steps over which to linearly ramp the learning rate from 0 to max_lr.
+  warmup_steps: 500
+
+  # AdamW weight decay coefficient (L2 regularization strength).
+  weight_decay: 0.1
+
+  # Maximum gradient L2-norm; gradients are rescaled if they exceed this threshold.
+  grad_clip: 1.0
+
+  # Weight on the JEPA auxiliary loss: total_loss = lm_loss + lambda_jepa * jepa_loss.
+  # Start at 0.1; ablate with 0.01 (weaker) and 0.5 (stronger) to tune.
+  lambda_jepa: 0.1
+
+  # Print a log line every this many steps.
+  log_every: 100
+
+  # Save a checkpoint every this many steps.
+  save_every: 5000
+
+  # Optional: path to a .pt checkpoint to resume from. Leave null to start fresh.
+  resume_from: null
