@@ -1,4 +1,5 @@
 import os                           # for creating checkpoint directories
+import sys                          # for platform detection (macOS DataLoader fix)
 import math                         # for learning rate cosine schedule calculation
 import argparse                     # for parsing command-line flags
 import yaml                         # for reading configs/base.yaml
@@ -87,11 +88,14 @@ def train(cfg):
         seq_len=cfg["model"]["seq_len"],           # number of tokens per training window
         vocab_size=cfg["model"]["vocab_size"],     # tokenizer vocabulary size
     )
+    # num_workers=0 on macOS: multiprocessing DataLoader workers deadlock on macOS
+    # due to how the OS handles forked processes. 0 means data loads in the main process.
+    num_workers = 0 if sys.platform == "darwin" else 2
     loader = DataLoader(
         dataset,
         batch_size=cfg["train"]["batch_size"],     # number of sequences per gradient step
         shuffle=True,                              # shuffle order of windows each epoch
-        num_workers=2,                             # background workers to prefetch batches
+        num_workers=num_workers,                   # 0 on macOS to avoid multiprocessing deadlock
         pin_memory=(device == "cuda"),             # pin memory for faster GPU transfer
     )
 

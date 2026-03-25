@@ -24,6 +24,40 @@ python src/train.py --config configs/base.yaml
 python src/compress.py --checkpoint checkpoints/final.pt --output artifact/model.pt.gz
 ```
 
+## Runs
+
+### 03/24/2026 — 9 PM
+
+| Setting | Value |
+|---|---|
+| Corpus | Project Gutenberg *War and Peace* (~3.2M chars, 853,923 tokens) |
+| Tokenizer | tiktoken gpt2 (vocab_size = 50,257) |
+| Model | 10,904,384 parameters (d_model=128, n_layers=6, n_heads=4, d_sym=64) |
+| Device | Apple MPS (Apple Silicon) |
+| Batch size | 4 sequences × 256 tokens |
+| Max LR | 3e-4 (500-step linear warmup + cosine decay) |
+| λ_JEPA | 0.1 |
+
+**Loss curve (sampled):**
+
+| Step | LR | LM loss | bpt |
+|---|---|---|---|
+| 100 | 5.94e-05 | 27.45 | 39.6 |
+| 500 | 2.99e-04 | 14.42 | 20.8 |
+| 700 | 3.00e-04 | 8.88 | 12.8 |
+| 1100 | 3.00e-04 | 6.18 | 8.9 |
+| 1500 | 3.00e-04 | 5.83 | 8.4 |
+| 5300 | 2.94e-04 | 4.40 | 6.3 |
+| 8000 | 2.85e-04 | 4.69 | 6.8 |
+
+**Notes:**
+- Loss crossed below the 15.6 bpt random-baseline at step ~700
+- bpt plateaued in the 6.1–7.1 range from step ~5000 onward, indicating the model began oscillating around the optimum for this corpus size
+- JEPA auxiliary loss remained stable at 0.003–0.006 throughout — no interference with the LM objective
+- Corpus is too small (~853k tokens) for 10k steps without overfitting; a larger dataset is the main lever for improvement
+
+---
+
 ## Overview
 
 Standard language models map token IDs to a single embedding stream before passing through a transformer. This design introduces a **second symbolic stream** (Stream B) that runs in parallel with the normal embedding lookup (Stream A), then merges both representations before the transformer.
@@ -33,6 +67,10 @@ The model is then trained with two simultaneous objectives:
 - **JEPA Head (B):** future-state prediction, encouraging the model to learn structured, predictive representations beyond surface-level token distributions
 
 ---
+
+## Runs
+
+
 
 ## Pipeline
 

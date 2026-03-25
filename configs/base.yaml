@@ -7,33 +7,40 @@ data:
 # ── Model architecture ─────────────────────────────────────────────────────────
 model:
   # Number of tokens in the vocabulary.
-  # The Parameter Golf challenge uses 1024; set to 50257 for gpt2 tokenizer.
-  vocab_size: 1024
+  # Must match the tokenizer: tiktoken gpt2 uses 50257.
+  # Switch to a custom 1024-token tokenizer later to meet the challenge spec.
+  vocab_size: 50257
 
   # Hidden dimension of the transformer (width of residual stream).
-  # Increasing this is the main lever for adding model capacity.
-  d_model: 256
+  # Kept at 128 with vocab_size=50257 so the embedding table stays small enough
+  # for the 16MB artifact limit. Scale up if switching to a smaller vocabulary.
+  d_model: 128
 
   # Number of stacked transformer blocks (depth).
   n_layers: 6
 
   # Number of attention heads per block. Must divide d_model evenly.
-  # head_dim = d_model / n_heads = 256 / 4 = 64
+  # head_dim = d_model / n_heads = 128 / 4 = 32
   n_heads: 4
 
   # Stream B auxiliary embedding dimension (d_sym << d_model to stay lightweight).
   d_sym: 64
 
   # Length of each training sequence window in tokens.
-  seq_len: 512
+  # Kept short to avoid OOM on MPS: logits are (B, T, vocab_size) so T drives memory.
+  seq_len: 256
 
 # ── Training ───────────────────────────────────────────────────────────────────
 train:
   # Mini-batch size: number of sequences processed per gradient step.
-  batch_size: 32
+  # Small batch + gradient accumulation is more memory-efficient on MPS than large batch.
+  batch_size: 4
 
   # Total number of gradient update steps to perform.
-  max_steps: 50000
+  # ~834 steps = 1 epoch on this corpus (853k tokens / (batch=4 × seq=256)).
+  # 10,000 steps ≈ 12 epochs — a reasonable stopping point before overfitting.
+  # Increase only if you switch to a larger corpus.
+  max_steps: 10000
 
   # Number of full passes through the dataset (an upper bound; max_steps takes priority).
   epochs: 10
