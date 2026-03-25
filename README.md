@@ -4,13 +4,25 @@ A proposed architecture for the Parameter Golf challenge that combines a dual-in
 
 ---
 
-## Run 
+## Run
+
+```bash
+# 1. Create and activate a virtual environment
 python3 -m venv pyvenv
 source pyvenv/bin/activate
+
+# 2. Install dependencies
 pip install -e .
+
+# 3. Download a sample training corpus (~3MB of text → data/corpus.txt)
 python src/data.py
+
+# 4. Train the model (checkpoints saved to checkpoints/ every 5000 steps)
 python src/train.py --config configs/base.yaml
+
+# 5. Compress the trained model to a ≤16MB submission artifact
 python src/compress.py --checkpoint checkpoints/final.pt --output artifact/model.pt.gz
+```
 
 ## Overview
 
