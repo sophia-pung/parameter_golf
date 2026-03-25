@@ -1,0 +1,7 @@
+README.md
+pyproject.toml
+src/chineseroom.egg-info/PKG-INFO
+src/chineseroom.egg-info/SOURCES.txt
+src/chineseroom.egg-info/dependency_links.txt
+src/chineseroom.egg-info/requires.txt
+src/chineseroom.egg-info/top_level.txt

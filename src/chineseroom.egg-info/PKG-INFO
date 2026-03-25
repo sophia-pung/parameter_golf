@@ -1,0 +1,11 @@
+Metadata-Version: 2.4
+Name: chineseroom
+Version: 0.1.0
+Summary: Dual-Representation JEPA language model for the Parameter Golf challenge
+Requires-Python: >=3.11
+Requires-Dist: torch>=2.3.0
+Requires-Dist: tiktoken>=0.7.0
+Requires-Dist: einops>=0.8.0
+Requires-Dist: pyyaml>=6.0
+Provides-Extra: dev
+Requires-Dist: wandb>=0.17.0; extra == "dev"

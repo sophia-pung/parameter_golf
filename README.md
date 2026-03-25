@@ -4,6 +4,14 @@ A proposed architecture for the Parameter Golf challenge that combines a dual-in
 
 ---
 
+## Run 
+python3 -m venv pyvenv
+source pyvenv/bin/activate
+pip install -e .
+python src/data.py
+python src/train.py --config configs/base.yaml
+python src/compress.py --checkpoint checkpoints/final.pt --output artifact/model.pt.gz
+
 ## Overview
 
 Standard language models map token IDs to a single embedding stream before passing through a transformer. This design introduces a **second symbolic stream** (Stream B) that runs in parallel with the normal embedding lookup (Stream A), then merges both representations before the transformer.
